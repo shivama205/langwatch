@@ -25,7 +25,6 @@ import { RunHistoryFilters } from "./RunHistoryFilters";
 import { RunHistoryFooter } from "./RunHistoryFooter";
 import { RunRow } from "./RunRow";
 import { GroupRow } from "./GroupRow";
-import { QueueStatusBanner } from "./QueueStatusBanner";
 import { useRunHistoryStore } from "./useRunHistoryStore";
 import {
   computeBatchRunSummary,
@@ -97,27 +96,7 @@ export function RunHistoryList({ suite, onStatsReady, period }: RunHistoryListPr
     }
   }, [groupBy]);
 
-  // Fetch queue status for pending/active jobs
-  const { data: queueStatus } = api.suites.getQueueStatus.useQuery(
-    {
-      projectId: project?.id ?? "",
-      suiteId: suite.id,
-    },
-    {
-      enabled: !!project,
-      refetchInterval: 5000,
-    },
-  );
-
-  // Banner only shows waiting jobs (active jobs appear in ES run history)
-  const hasPendingJobs = (queueStatus?.waiting ?? 0) > 0;
-
-  // Poll faster when any jobs are in the queue (waiting or active),
-  // since active jobs will soon produce ES events we want to show quickly
-  const hasQueuedJobs =
-    (queueStatus?.waiting ?? 0) > 0 || (queueStatus?.active ?? 0) > 0;
-
-  // Fetch all run data for this suite (unpaginated).
+  // Fetch all run data for this suite (unpaginated), including queued/active BullMQ jobs.
   // Date filtering is applied client-side to avoid capping results.
   const {
     data: runData,
@@ -130,8 +109,7 @@ export function RunHistoryList({ suite, onStatsReady, period }: RunHistoryListPr
     },
     {
       enabled: !!project,
-      // Poll faster when jobs are queued, otherwise normal interval
-      refetchInterval: hasQueuedJobs ? 3000 : 5000,
+      refetchInterval: 5000,
     },
   );
 
@@ -319,11 +297,6 @@ export function RunHistoryList({ suite, onStatsReady, period }: RunHistoryListPr
   if (!runData || runData.length === 0) {
     return (
       <VStack paddingY={8} align="center" gap={4}>
-        {hasPendingJobs && (
-          <Box paddingX={6}>
-            <QueueStatusBanner queueStatus={queueStatus} />
-          </Box>
-        )}
         <Text fontSize="sm" color="fg.muted">
           Run this suite to see results here.
         </Text>
@@ -345,13 +318,6 @@ export function RunHistoryList({ suite, onStatsReady, period }: RunHistoryListPr
           onViewModeChange={setViewMode}
         />
       </Box>
-
-      {/* Queue status banner */}
-      {hasPendingJobs && (
-        <Box paddingX={6} paddingBottom={3}>
-          <QueueStatusBanner queueStatus={queueStatus} />
-        </Box>
-      )}
 
       {/* Run history rows — no overflow here; parent provides the scrollport for sticky headers */}
       {(groupBy === "none" ? batchRuns.length : groups.length) === 0 && (filters.scenarioId || filters.passFailStatus) ? (
