@@ -132,7 +132,6 @@ export function AllRunsPanel({ period }: AllRunsPanelProps) {
     { enabled: !!project },
   );
 
-
   const targetNameMap = useTargetNameMap();
 
   const resolveTargetName = useCallback(
@@ -243,9 +242,9 @@ export function AllRunsPanel({ period }: AllRunsPanelProps) {
   }
 
   return (
-    <VStack align="stretch" gap={4} height="100%" overflow="auto" paddingX={6} paddingY={4}>
+    <VStack align="stretch" gap={0} height="100%" overflow="auto" paddingY={4}>
       {/* Header */}
-      <Box>
+      <Box paddingX={6} paddingBottom={4}>
         <Text fontSize="xl" fontWeight="bold">
           All Runs
         </Text>
@@ -256,17 +255,19 @@ export function AllRunsPanel({ period }: AllRunsPanelProps) {
       </Box>
 
       {/* Filters */}
-      <RunHistoryFilters
-        scenarioOptions={scenarioOptions}
-        filters={filters}
-        onFiltersChange={setFilters}
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-      />
+      <Box paddingX={6} paddingBottom={4}>
+        <RunHistoryFilters
+          scenarioOptions={scenarioOptions}
+          filters={filters}
+          onFiltersChange={setFilters}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+        />
+      </Box>
 
       {/* Run list */}
       {batchRuns.length === 0 ? (
-        <Box paddingY={8} textAlign="center">
+        <Box paddingX={6} paddingY={8} textAlign="center">
           <Text color="fg.muted">
             {filters.scenarioId || filters.passFailStatus
               ? "No runs match the selected filters."
@@ -275,7 +276,7 @@ export function AllRunsPanel({ period }: AllRunsPanelProps) {
         </Box>
       ) : (
         <>
-          <VStack align="stretch" gap={3}>
+          <VStack align="stretch" gap={0}>
             {batchRuns.map((batchRun) => {
               const summary = computeBatchRunSummary({ batchRun });
               const isExpanded = expandedIds.has(batchRun.batchRunId);
@@ -304,7 +305,7 @@ export function AllRunsPanel({ period }: AllRunsPanelProps) {
 
           {/* Load More button */}
           {hasMore && (
-            <Box paddingTop={4} display="flex" justifyContent="center">
+            <Box paddingX={6} paddingTop={4} display="flex" justifyContent="center">
               <Button variant="outline" onClick={handleLoadMore}>
                 Load More...
               </Button>
@@ -314,7 +315,9 @@ export function AllRunsPanel({ period }: AllRunsPanelProps) {
       )}
 
       {/* Footer */}
-      <RunHistoryFooter totals={totals} />
+      <Box paddingX={6}>
+        <RunHistoryFooter totals={totals} />
+      </Box>
     </VStack>
   );
 }
