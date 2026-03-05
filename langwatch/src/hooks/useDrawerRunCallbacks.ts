@@ -1,16 +1,28 @@
 import { useCallback } from "react";
 import { useDrawer } from "./useDrawer";
+import {
+  ALL_RUNS_ID,
+  useSuiteRouting,
+} from "../components/suites/useSuiteRouting";
 
 /**
- * Returns callbacks that navigate to the scenario run detail drawer.
+ * Returns callbacks for quick-run results.
  *
- * Shared between ScenarioRunDetailDrawer and ScenarioFormDrawer to avoid
- * duplicating the `openDrawer("scenarioRunDetail", ...)` pattern.
+ * - onRunComplete navigates to the all-runs page so the user sees runs in progress.
+ * - onRunFailed opens the scenario run detail drawer for inspection.
  */
 export function useDrawerRunCallbacks() {
   const { openDrawer } = useDrawer();
+  const { navigateToSuite } = useSuiteRouting();
 
   const onRunComplete = useCallback(
+    (_result?: { scenarioRunId: string }) => {
+      navigateToSuite(ALL_RUNS_ID);
+    },
+    [navigateToSuite],
+  );
+
+  const onRunFailed = useCallback(
     (result: { scenarioRunId: string }) => {
       openDrawer("scenarioRunDetail", {
         urlParams: { scenarioRunId: result.scenarioRunId },
@@ -19,5 +31,5 @@ export function useDrawerRunCallbacks() {
     [openDrawer],
   );
 
-  return { onRunComplete, onRunFailed: onRunComplete };
+  return { onRunComplete, onRunFailed };
 }
