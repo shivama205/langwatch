@@ -1,7 +1,7 @@
 /**
  * @vitest-environment jsdom
  *
- * Integration tests for the DrawerContent backdrop behavior.
+ * Integration tests for the DrawerContent transparency and blur styling.
  *
  * @see specs/features/drawer-backdrop-transparency-blur.feature
  */
@@ -14,10 +14,10 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <ChakraProvider value={defaultSystem}>{children}</ChakraProvider>
 );
 
-function renderDrawer({ backdrop }: { backdrop?: boolean } = {}) {
+function renderDrawer() {
   render(
     <Drawer.Root open={true} placement="end">
-      <Drawer.Content backdrop={backdrop}>
+      <Drawer.Content>
         <Drawer.Body>Content</Drawer.Body>
       </Drawer.Content>
     </Drawer.Root>,
@@ -25,28 +25,19 @@ function renderDrawer({ backdrop }: { backdrop?: boolean } = {}) {
   );
 }
 
-describe("DrawerContent backdrop", () => {
+describe("DrawerContent transparency and blur", () => {
   afterEach(cleanup);
 
   describe("when a drawer opens", () => {
-    it("renders a backdrop overlay element", () => {
+    it("renders the drawer content panel", () => {
       renderDrawer();
 
-      const backdrop = document.querySelector(
-        "[data-part='backdrop']",
+      const content = document.querySelector(
+        "[data-part='content']",
       ) as HTMLElement | null;
-      expect(backdrop).not.toBeNull();
-      // Visual styles (blur, opacity) are applied via Chakra props and verified
-      // in the component source; jsdom cannot compute resolved CSS values.
-    });
-  });
-
-  describe("when a drawer opens with backdrop disabled", () => {
-    it("renders no backdrop overlay", () => {
-      renderDrawer({ backdrop: false });
-
-      const backdrop = document.querySelector("[data-part='backdrop']");
-      expect(backdrop).toBeNull();
+      expect(content).not.toBeNull();
+      // Transparency (80% opacity) and blur (25px) are applied via Chakra props
+      // on the content panel; jsdom cannot compute resolved CSS values.
     });
   });
 });
