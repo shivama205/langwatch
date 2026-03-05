@@ -25,7 +25,7 @@ import {
 import type { SimulationSuite } from "@prisma/client";
 import { ChevronDown, ChevronRight, Play } from "lucide-react";
 import { MAX_REPEAT_COUNT } from "~/server/suites/constants";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   useDrawer,
   useDrawerParams,
@@ -71,6 +71,13 @@ export function SuiteFormDrawer(_props: SuiteFormDrawerProps) {
 
   const isOpen = drawerOpen("suiteEditor");
   const suiteId = params.suiteId;
+
+  useEffect(() => {
+    if (!isOpen) {
+      setScenarioEditorOpen(false);
+      setAgentHttpEditorOpen(false);
+    }
+  }, [isOpen]);
 
   // Get flow callbacks for onSaved / onRan
   const callbacks = getFlowCallbacks("suiteEditor");

@@ -3,14 +3,6 @@ Feature: Child drawers open as nested overlays instead of navigating
   I want drawers opened from within another drawer to appear as nested overlays
   So that I maintain context in the parent drawer and can return to it by closing the child
 
-  # Implementation approach: Child drawers are rendered via local React state
-  # within the parent drawer component, NOT via URL navigation.
-  # This preserves parent state but sacrifices deep-linking to the child.
-  #
-  # Scope: SuiteFormDrawer child drawers only (scenarioEditor, agentHttpEditor).
-  # ScenarioRunDetailDrawer already works correctly via local state.
-  # Evaluations-v3 picker flows are out of scope (separate architecture).
-
   Background:
     Given I am logged into project "my-project"
 
@@ -60,7 +52,6 @@ Feature: Child drawers open as nested overlays instead of navigating
 
   # ---------------------------------------------------------------------------
   # Case 3: Scenario run detail -> View Trace (regression guard)
-  # Already works via local state - these verify no regression.
   # ---------------------------------------------------------------------------
 
   @integration
