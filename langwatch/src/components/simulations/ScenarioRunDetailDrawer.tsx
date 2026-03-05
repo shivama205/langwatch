@@ -161,7 +161,6 @@ export function ScenarioRunDetailDrawer({
         placement="end"
         size="lg"
       >
-        <Drawer.Backdrop />
         <Drawer.Content paddingX={0} maxWidth="720px" overflow="hidden">
           {!scenarioState && open && (
             <Drawer.Body>
@@ -392,7 +391,6 @@ export function ScenarioRunDetailDrawer({
         placement="end"
         size="xl"
       >
-        <Drawer.Backdrop />
         <Drawer.Content paddingX={0} maxWidth="70%">
           <Drawer.CloseTrigger zIndex={10} />
           <Drawer.Body paddingY={0} paddingX={0} overflowY="auto">
